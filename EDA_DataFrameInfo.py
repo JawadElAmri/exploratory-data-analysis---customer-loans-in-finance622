@@ -188,45 +188,35 @@ class DataFrameTransform:
         """
         The function drops specified columns from a DataFrame and returns the name of the column that
         was dropped.
-        
-        :param cols_for_drop: The parameter "cols_for_drop" is a list of column names that you want to
-        drop from the DataFrame
-        :return: The variable "col" is being returned.
         """
+        
+      
         for col in cols_for_drop:
             self.df = self.df.drop([cols_for_drop], axis=1)
-            return col
+            
 
     def impute_nulls_mith_mode(self, col, mode):
         """
         The function imputes null values in a specified column of a dataframe using the mode value.
-        
-        :param col: The "col" parameter represents the column name or list of column names in the
-        dataframe where you want to impute null values
-        :param mode: The "mode" parameter is the value that will be used to impute the null values in
-        the specified column. It should be a single value that represents the most frequent value in the
-        column
+      
         """
         mode = ['last_credit_pull_date', 'next_payment_date', 'last_payment_date', 'employment_length','term']
-        for col in meidan:
+        for col in mode:
            mode_imputer = SimpleImputer(strategy="most_frequent")
            df_mode_arr = mode_imputer.fit_transform(self.df)
            loans_df = pd.DataFrame(data=df_mode_arr, columns=loans_cols)
            print(loans_df)
     
-    def impute_nulls_with_mean(self, col, mean):
+    def impute_nulls_with_median(self, col, median):
         """
         The function imputes null values in a specified column with the mean value.
         
-        :param col: The "col" parameter represents the column or columns in which you want to impute
-        null values with the mean
-        :param mean: The "mean" parameter in the code represents the mean value that will be used to
-        impute null values in the specified column
+    
         """
-        mean = ['collections_12_mths_ex_med', 'mths_since_last_record','mths_since_last_delinq', 'int_rate', 'funded_amount']
-        for col in mean:
-            mean_imputer = SimpleImputer(strategy="median")
-            df_mean_arr = mean_imputer.fit_transform(self.df)
+        median = ['collections_12_mths_ex_med', 'mths_since_last_record','mths_since_last_delinq', 'int_rate', 'funded_amount']
+        for col in median:
+            median_imputer = SimpleImputer(strategy="median")
+            df_mean_arr = median_imputer.fit_transform(self.df)
             loans_df = pd.DataFrame(data=df_mean_arr, columns=loans_cols)
             loans_df
 
