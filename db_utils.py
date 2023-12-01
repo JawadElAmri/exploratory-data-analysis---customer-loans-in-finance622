@@ -35,7 +35,7 @@ class RDSDatabaseConnector:
         the yaml credentials
         """
         login = self.database_credentials_dict
-        engine = create_engine(f"{login['DATABASE_TYPE']}+{login['DBAPI']}://{login['USER']}:{login['PASSWORD']}@{login['HOST']}:{login['PORT']}/{login['DATABASE']}")
+        engine = create_engine(f"{login['DATABASE_TYPE']}+{login['DBAPI']}://{login['USER']} :{login['PASSWORD']}@{login['HOST']}\:{login['PORT']}/{login['DATABASE']}")
         engine.execution_options(isolation_level='AUTOCOMMIT').connect()
         engine.connect() 
         return engine 
