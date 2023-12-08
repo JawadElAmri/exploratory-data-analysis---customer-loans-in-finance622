@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 import pandas as pd 
-import psycopg2 
 import yaml
 
 
@@ -17,8 +16,25 @@ def load_database_credentials():
 
 
 class RDSDatabaseConnector: 
-    """ The RDSDatabaseConnector class connects to the AWS RDS database, extracts the loan payments table, and saves the data to a CSV file.
+    """ 
+    The RDSDatabaseConnector class connects to the AWS RDS database, extracts the loan payments table, and saves the data to a CSV file.
 
+    Paramaters:
+    database_credentials_dict: Dictionary with the database credentials 
+    table: The AWS dataframe 
+    df: The dataframe
+    
+    Atributes: 
+    self.database_credentials_dict: The database credentials
+    
+
+    Methods:
+    __init__(): Initialises the class
+    initialise_sqlalchmey_engine(): Connects to the AWS database
+    database_extraction(): Extracts the dataframe from the cloud
+    save_data_to_csv(): Saves the dataframe on local hard drive 
+
+     
     """
     def __init__(self, database_credentials_dict):
         """
@@ -34,7 +50,7 @@ class RDSDatabaseConnector:
         The function `initialise_sqlalchemy_engine` initialises and returns a SQLAlchemy engine using
         the yaml credentials
         """
-        login = self.database_credentials_dict
+        login = database_credentials_dict
         engine = create_engine(f"{login['DATABASE_TYPE']}+{login['DBAPI']}://{login['USER']} :{login['PASSWORD']}@{login['HOST']}\:{login['PORT']}/{login['DATABASE']}")
         engine.execution_options(isolation_level='AUTOCOMMIT').connect()
         engine.connect() 

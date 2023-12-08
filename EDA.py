@@ -1,20 +1,34 @@
 import pandas as pd 
-import numpy as np
-from pandas.core.tools import numeric
-import seaborn as sns
+
 
 df = pd.read_csv('loan_payments.csv') 
 
-categories = ['grade', 'term','sub_grade', 'home_ownership', 'verification_status', 'loan_status', 'purpose', 'application_type', 'employment_length']
-dates = ['issue_date', 'earliest_credit_line', 'last_payment_date', 'next_payment_date', 'last_credit_pull_date']
-excess_dp = ['funded_amount_inv', 'collection_recovery_fee']
-floats = ['funded_amount', 'mths_since_last_delinq', 'mths_since_last_record', 'collections_12_mths_ex_med', 'mths_since_last_major_derog']
-
-
 class DataTransform: 
-    """The DataTransform class provides methods to transform different types of data in a pandas DataFrame,
+    """
+    The DataTransform class provides methods to transform different types of data in a pandas DataFrame,
     such as converting object columns to boolean, category, date, or integer types, rounding float
     values, and converting a specific column to integer by removing the "months" string.
+
+    Paramaters: 
+    df: The dataframe coverted to pandas fromat from csv
+    categories: list of columns to change to category data type
+    dates: list if columns to change to datetime64 data type
+    excess_dp: Columns to round up becuase they have more than 2 decimal places
+    floats: list of columns to change to float data type 
+    col: Column to change ot boolean 
+
+    Atributes: 
+    self.df: This is the pandas dataframe
+
+    Methods:
+    __init__(): Initialises the class
+    object_to_category(): Changes column to category data type
+    object_to_date(): Changes column to datetime64 data type
+    round_floats(): Rounds float columns to 2 decimal places
+    flaot_to_int(): Changes float column to int data type
+    object_to_bool: Changes column to boolean data type
+    term_to_int(): Changes term to int data type and removes 'months'
+
     """
     def  __init__(self, df):
         """
@@ -62,7 +76,7 @@ class DataTransform:
         for col in excess_dp:
             self.df[col] = self.df[col].round(2)
     
-    def flaot_to_int(self, floats):
+    def float_to_int(self, floats):
         """
         The function converts float numbers in a pandas DataFrame to integer numbers.
         
@@ -85,46 +99,29 @@ class DataTransform:
         """
         #Boolean values (True/False) as column has 2 unique values n or y
         self.df[col] = self.df[col].astype("bool")
+    
+    @staticmethod
+    def term_to_int():
+        df['term'] = df['term'].str.replace('months', '')
+        df['term'] = df['term'].astype(int)
+        
 
 
 if __name__ == '__main__': 
+
+
+    categories = ['grade','sub_grade', 'home_ownership', 'verification_status', 'loan_status', 'purpose', 'application_type', 'employment_length']
+    dates = ['issue_date', 'earliest_credit_line', 'last_payment_date', 'next_payment_date', 'last_credit_pull_date']
+    excess_dp = ['funded_amount_inv', 'collection_recovery_fee']
+    floats = ['funded_amount', 'mths_since_last_delinq', 'mths_since_last_record', 'collections_12_mths_ex_med', 'mths_since_last_major_derog']
+
     transform = DataTransform(df)
     transform.object_to_category(categories)
     transform.object_to_date(dates)
     transform.round_floats(excess_dp)
-    transform.flaot_to_int(floats)
+    transform.float_to_int(floats)
     transform.object_to_bool('payment_plan')
-   
-
-#funded_amount                   5.544799
-#term                            8.799395 int/object mmode
-#int_rate                        9.531449 float mean
-#employment_length               3.905515 category mode
-#mths_since_last_delinq         57.166565 float mean
-#mths_since_last_record         88.602460 floa mean 
-#last_payment_date               0.134609 date mode
-#next_payment_date              60.127971 date mode
-#last_credit_pull_date           0.012908 date mode
-#collections_12_mths_ex_med      0.094042 float mean
-#mths_since_last_major_derog    86.172116 float
-#mode = ['last_credit_pull_date', 'next_payment_date', 'last_payment_date', 'employment_length','term']
-#mean = ['collections_12_mths_ex_med', 'mths_since_last_record','mths_since_last_delinq', 'int_rate', 'funded_amount']
-   #Cols_to_ drop = 
-#mths_since_last_major_derog    86.172116
-#mths_since_last_record         88.602460
-#member_id
-#id_
-
-#Median-It is preferred if data is numeric and skewed.
-#Mean-It is preferred if data is numeric and not skewed.
-#Mode-It is preferred if the data is a string(object) or numeric.
-   
-
-
-#def find_skewed_cols():
-#        num_col = df.select_dtypes(include='number').columns.tolist()        
-#        list_of_skew = df[num_col].skew()
-#        skew_cols = [col for col in list_of_skew if col <-1 or col >1]
-#        print(skew_cols)
-#find_skewed_cols()
+    
 print(df.info())
+
+df.to_csv('transformed_loan_payments.csv')
